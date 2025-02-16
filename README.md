@@ -25,7 +25,7 @@
     sudo systemctl enable postgresql
 
 ### switch to postgres user and set password
-   sudo -i -u postgres psql
+    sudo -i -u postgres psql
     ALTER USER WITH PASSWORD 'your_secure_password';
     \q
 
