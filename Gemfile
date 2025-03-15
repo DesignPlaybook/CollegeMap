@@ -33,7 +33,6 @@ gem "dotenv-rails"
 
 # Authentication
 gem "jwt"
-gem "twilio-ruby"
 
 
 group :development, :test do
