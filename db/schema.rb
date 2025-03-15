@@ -31,8 +31,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
   end
 
   create_table "institute_departments", force: :cascade do |t|
-    t.bigint "institute_id", null: false
-    t.bigint "department_id", null: false
+    t.integer "institute_id"
+    t.integer "department_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["department_id"], name: "index_institute_departments_on_department_id"
@@ -58,7 +58,4 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
     t.datetime "updated_at", null: false
     t.index ["mobile_number"], name: "index_users_on_mobile_number"
   end
-
-  add_foreign_key "institute_departments", "departments"
-  add_foreign_key "institute_departments", "institutes"
 end
