@@ -10,27 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_14_134532) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
+    t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
   create_table "departments", force: :cascade do |t|
     t.string "name"
+    t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_departments_on_slug", unique: true
+  end
+
+  create_table "institute_departments", force: :cascade do |t|
+    t.bigint "institute_id", null: false
+    t.bigint "department_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["department_id"], name: "index_institute_departments_on_department_id"
+    t.index ["institute_id"], name: "index_institute_departments_on_institute_id"
   end
 
   create_table "institutes", force: :cascade do |t|
     t.string "name"
     t.string "address"
+    t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_institutes_on_slug", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -43,4 +58,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_14_134532) do
     t.datetime "updated_at", null: false
     t.index ["mobile_number"], name: "index_users_on_mobile_number"
   end
+
+  add_foreign_key "institute_departments", "departments"
+  add_foreign_key "institute_departments", "institutes"
 end

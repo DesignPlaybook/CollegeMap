@@ -1,3 +1,3 @@
 class Category < ApplicationRecord
-  belongs_to :institute_department
+  has_many :institute_department
 end

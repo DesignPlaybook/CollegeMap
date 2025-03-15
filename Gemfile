@@ -34,6 +34,8 @@ gem "dotenv-rails"
 # Authentication
 gem "jwt"
 
+# json response
+gem 'jbuilder', '~> 2.7'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
