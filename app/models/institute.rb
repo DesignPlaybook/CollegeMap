@@ -15,7 +15,6 @@ class Institute < ApplicationRecord
         department = Department.find_or_initialize_by(slug: department_data[:slug])
         department.name = department_data[:name]
         department.save!
-        debugger
         InstituteDepartment.find_or_create_by(institute: institute, department: department)
       end
     end

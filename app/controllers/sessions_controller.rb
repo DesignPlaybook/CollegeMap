@@ -7,6 +7,10 @@ class SessionsController < ApplicationController
       return render json: { error: "Exceeded OTP limit. Try again after 24 hours" }, status: :too_many_requests
     end
 
+    if user.otp_sent_at.present? && user.otp_sent_at > 2.minute.ago
+      return render json: { error: "OTP already sent. Please wait for 2 minutes before requesting a new one." }, status: :too_many_requests
+    end
+    
     otp = OtpService.generate_otp
     
     OtpService.send_otp(user.mobile_number, otp)
