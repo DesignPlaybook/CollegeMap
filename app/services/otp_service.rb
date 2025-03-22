@@ -3,7 +3,7 @@ class OtpService
 
   # Generate a 6-digit OTP
   def self.generate_otp
-    rand(100_000..999_999).to_s
+    rand(1000..9999).to_s
   end
 
   # Send OTP via SMS (Replace with actual SMS provider API)

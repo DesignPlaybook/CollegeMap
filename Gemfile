@@ -34,6 +34,8 @@ gem "dotenv-rails"
 # Authentication
 gem "jwt"
 
+gem 'bcrypt', '~> 3.1.7'
+
 # json response
 gem 'jbuilder', '~> 2.7'
 

@@ -7,12 +7,13 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ENV["EXTERNAL_HOST"] || ENV["LOCAL_HOST"] || "http://localhost:3000"
+    origins "http://localhost:3000", "https://6ea5-2409-40c2-104e-9795-2fc6-9163-a64d-2525.ngrok-free.app", "https://0b0f-2409-40c2-1018-30f4-8596-7b1d-2400-8070.ngrok-free.app"
 
     resource "*",
       headers: :any,
-      expose: ["Set-Cookie"],
-      methods: [:get, :post, :put, :patch, :delete, :options, :head],
+      expose: ["Authorization"], # Allow the Authorization header
+      methods: [:get, :post, :put, :patch, :delete, :options, :head], 
       credentials: true # Allow cookies to be sent cross-origin
+
   end
 end

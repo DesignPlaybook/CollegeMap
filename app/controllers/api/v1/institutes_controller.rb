@@ -1,6 +1,15 @@
 class Api::V1::InstitutesController < ApplicationController
+  before_action :authenticate_user, only: [:enhanced_result]
   def index
-    @institutes = Institute.all
+    @institutes = Institute.includes(:departments).limit(5)
+  end
+
+  def primary_result
+    @institutes = Institute.includes(:departments).limit(5)
+  end
+
+  def enhanced_result
+    @institutes = Institute.includes(:departments)
   end
 
   def import_institutes

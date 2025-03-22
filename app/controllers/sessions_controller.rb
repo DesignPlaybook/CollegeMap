@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   SECRET_KEY = Rails.application.secret_key_base
+  before_action :authenticate_user, only: [:show]
 
   def send_verification_code
     user = User.find_or_create_by(mobile_number: params[:mobile_number])
@@ -10,7 +11,7 @@ class SessionsController < ApplicationController
     if user.otp_sent_at.present? && user.otp_sent_at > 2.minute.ago
       return render json: { error: "OTP already sent. Please wait for 2 minutes before requesting a new one." }, status: :too_many_requests
     end
-    
+
     otp = OtpService.generate_otp
     
     OtpService.send_otp(user.mobile_number, otp)
@@ -28,14 +29,8 @@ class SessionsController < ApplicationController
       token = generate_jwt(user)
       user.update(otp: nil) # Clear OTP after successful login
 
-      # Store JWT in HTTP-Only, Secure Cookie
-      cookies.signed[:jwt] = {
-        value: token,
-        httponly: true,   # Prevent JS from accessing it
-        secure: Rails.env.production?, # Secure cookies are only used in production to ensure they are transmitted over HTTPS, enhancing security.
-        same_site: :strict, # Prevent CSRF attacks by setting the SameSite attribute to Strict
-        expires: 24.hours.from_now
-      }
+      # Return JWT in JSON response
+      render json: { message: "Login successful", token: token }
       render json: { message: "Login successful" }
     else
       if user&.otp_sent_at.present? && user.otp_sent_at <= 5.minutes.ago
@@ -47,8 +42,17 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    cookies.delete(:jwt) # Clear JWT cookie on logout
-    render json: { message: "Logged out successfully" }
+    # Inform the client to remove the token from local storage
+    render json: { message: "Logged out successfully. Please remove the token from local storage." }
+  end
+
+  def show
+    render json: {
+      user: {
+        id: @current_user.id,
+        mobile_number: @current_user.mobile_number
+      }
+    }
   end
 
   private
