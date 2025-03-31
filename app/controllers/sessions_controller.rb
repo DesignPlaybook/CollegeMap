@@ -31,7 +31,6 @@ class SessionsController < ApplicationController
 
       # Return JWT in JSON response
       render json: { message: "Login successful", token: token }
-      render json: { message: "Login successful" }
     else
       if user&.otp_sent_at.present? && user.otp_sent_at <= 5.minutes.ago
         render json: { error: "OTP has expired. Please request a new one." }, status: :unauthorized
