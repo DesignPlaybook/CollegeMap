@@ -9,6 +9,8 @@ class Api::V1::InstitutesController < ApplicationController
   end
 
   def enhanced_result
+    matrix_data = AhpMatrixBuilder.build_ahp_matrix(params)
+    result = AhpCalculator.new(matrix_data[:criteria], matrix_data[:matrix]).calculate_consistency_ratio
     @institutes = Institute.includes(:departments)
   end
 
