@@ -14,14 +14,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "categories", force: :cascade do |t|
-    t.string "name"
-    t.string "slug"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["slug"], name: "index_categories_on_slug", unique: true
-  end
-
   create_table "departments", force: :cascade do |t|
     t.string "name"
     t.string "slug"
@@ -33,15 +25,26 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
   create_table "institute_departments", force: :cascade do |t|
     t.integer "institute_id"
     t.integer "department_id"
+    t.float "placement_score"
+    t.float "higher_studies_score"
+    t.float "academics_experience_score"
+    t.float "campus_score"
+    t.float "entrepreneurship_score"
+    t.string "category_slug"
+    t.string "gender"
+    t.integer "closing_rank"
+    t.float "course_length"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["category_slug"], name: "index_institute_departments_on_category_slug"
+    t.index ["closing_rank"], name: "index_institute_departments_on_closing_rank"
     t.index ["department_id"], name: "index_institute_departments_on_department_id"
+    t.index ["gender"], name: "index_institute_departments_on_gender"
     t.index ["institute_id"], name: "index_institute_departments_on_institute_id"
   end
 
   create_table "institutes", force: :cascade do |t|
     t.string "name"
-    t.string "address"
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

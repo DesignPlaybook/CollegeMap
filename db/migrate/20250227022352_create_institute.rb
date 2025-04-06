@@ -2,7 +2,6 @@ class CreateInstitute < ActiveRecord::Migration[7.2]
   def change
     create_table :institutes do |t|
       t.string :name
-      t.string :address
       t.string :slug
       t.timestamps
     end

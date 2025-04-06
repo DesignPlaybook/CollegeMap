@@ -53,8 +53,8 @@ class AhpCalculator
   
     # Final Result (Weights + Consistency Check)
     def result
-      weights = @criteria.zip(@priority_vector).to_h
       consistency = calculate_consistency_ratio
+      weights = @criteria.zip(@priority_vector).to_h
   
       { weights: weights, consistency: consistency }
     end
