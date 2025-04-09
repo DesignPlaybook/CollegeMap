@@ -16,6 +16,7 @@ Rails.application.routes.draw do
           post :primary_result
           post :enhanced_result
           get :download_result
+          get :check_eligibility
           post :import_institutes
         end
       end
