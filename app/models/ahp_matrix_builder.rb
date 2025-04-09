@@ -15,7 +15,7 @@ class AhpMatrixBuilder
     #   - :matrix [Array<Array<Float>>]: A 2D array (NxN matrix) representing the pairwise comparisons
     #     of the criteria. The diagonal elements are 1.0, and the off-diagonal elements are populated
     #     based on the input comparisons.
-    def self.build_ahp_matrix(input_json)
+    def self.build_ahp_matrix(input_json= {}, primary=false)
         comparisons = input_json["_json"]
 
         # Step 1: Extract unique criteria and map them to indices
@@ -25,6 +25,9 @@ class AhpMatrixBuilder
         # Step 2: Initialize an NxN matrix with diagonal elements set to 1.0
         n = criteria.size
         matrix = Array.new(n) { Array.new(n, 1.0) }
+
+        # If primary is true, return a matrix filled with 1s
+        return { criteria: criteria, matrix: Array.new(n) { Array.new(n, 1.0) } } if primary
 
         # Step 3: Populate the matrix with comparison values
         comparisons.each do |entry|
