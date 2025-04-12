@@ -16,10 +16,11 @@ class AhpMatrixBuilder
     #     of the criteria. The diagonal elements are 1.0, and the off-diagonal elements are populated
     #     based on the input comparisons.
     def self.build_ahp_matrix(input_json= {}, primary=false)
-        comparisons = input_json["_json"]
+    
+        comparisons = input_json["_json"] || input_json["preferences"].select { |key, value| value == true }.keys
 
         # Step 1: Extract unique criteria and map them to indices
-        criteria = comparisons.flat_map { |entry| entry["comparisonKey"].split("_") }.uniq
+        criteria = comparisons.flat_map { |entry| (entry["comparisonKey"] || entry).split("_") }.uniq
         criteria_index = criteria.each_with_index.to_h
 
         # Step 2: Initialize an NxN matrix with diagonal elements set to 1.0

@@ -5,13 +5,79 @@ class InstituteDepartment < ApplicationRecord
   validates :institute_id, presence: true
   validates :department_id, presence: true
 
-  COLUMN_MAPPINGS = {
-    "placement_score" => "placement_score",
-    "higher_studies_score" => "higher_studies_score",
-    "academics_experience_score" => "academics_experience_score",
-    "campus_score" => "campus_score",
-    "entrepreneurship_score" => "entrepreneurship_score",
-    "closing_rank" => "closing_rank",
-    "course_length" => "course_length"
-  }
+  # Fetch eligible institutes based on gender, category, and rank
+  def self.eligible_institutes(params)
+    where(gender: params[:gender], category_slug: params[:category])
+      .where("closing_rank >= ?", params[:rank])
+  end
+
+  # Fetches and ranks institutes based on the given parameters and weights
+  def self.fetch_institutes(result = {}, params = {}, primary_result = false)
+    eligible_departments = eligible_institutes(params)
+    return [] if eligible_departments.empty?
+
+    scored_departments = calculate_scores(eligible_departments, result[:weights])
+
+    primary_result ? fetch_primary_results(scored_departments) : fetch_secondary_results(scored_departments, eligible_departments, params)
+  end
+
+  private
+
+  # Calculate weighted scores for each department
+  def self.calculate_scores(eligible_departments, weights)
+    eligible_departments
+      .select(:id, :institute_id, :placement_score, :higher_studies_score,
+              :academics_experience_score, :campus_score, :entrepreneurship_score)
+      .as_json
+      .each do |department|
+        department.each do |key, value|
+          weight = weights[key.to_sym]
+          department[key] = value * weight unless weight.nil?
+        end
+        department[:total_score] = department.except("id").values.sum
+      end
+  end
+
+  # Fetch primary results (top 5 departments)
+  def self.fetch_primary_results(scored_departments)
+    top_departments = scored_departments.sort_by { |dept| -dept[:total_score] }.first(5)
+    InstituteDepartment
+      .where(id: top_departments.map { |dept| dept["id"] })
+      .joins(:institute, :department)
+      .select("institutes.name AS institute_name, departments.name AS department_name")
+      .limit(5)
+  end
+
+  # Fetch secondary results (top 25 departments with preferences)
+  def self.fetch_secondary_results(scored_departments, eligible_departments, params)
+    preferred_ids = fetch_preferred_ids(eligible_departments, params)
+    remaining_count = 25 - preferred_ids.size
+
+    unless preferred_ids.empty?
+      scored_departments.reject! { |dept| preferred_ids.include?(dept["id"]) }
+    end
+
+    top_department_ids = if remaining_count > 0
+                           scored_departments.sort_by { |dept| -dept[:total_score] }
+                                             .first(remaining_count)
+                                             .map { |dept| dept["id"] } + preferred_ids
+                         else
+                           preferred_ids
+                         end
+
+    InstituteDepartment
+      .where(id: top_department_ids)
+      .joins(:institute, :department)
+      .select("institutes.name AS institute_name, departments.name AS department_name")
+      .limit(25)
+  end
+
+  # Fetch preferred institute department IDs
+  def self.fetch_preferred_ids(eligible_departments, params)
+    return [] unless params[:preffered_institute_ids].present?
+
+    eligible_departments
+      .where(institute_id: params[:preffered_institute_ids])
+      .ids
+  end
 end

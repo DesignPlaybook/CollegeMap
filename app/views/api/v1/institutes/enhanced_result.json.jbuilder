@@ -1,13 +1,6 @@
 json.institutes do
-  json.array! @institutes.each do |institute|
-    json.id institute.id
-    json.name institute.name
-    json.address institute.address
-    json.departments do
-      json.array! institute.departments.each do |department|
-        json.id department.id
-        json.name department.name
-      end
-    end
+  json.array! @institute_departments.each do |institute_department|
+    json.name institute_department.institute_name
+    json.department_name institute_department.department_name
   end
 end

@@ -5,14 +5,13 @@ class Api::V1::InstitutesController < ApplicationController
   end
 
   def check_eligibility
-    @institutes = InstituteDepartment.where(gender: params[:gender], category_slug: params[:category])
-        .where("closing_rank <= ?", params[:rank])
-        .joins(:institute)
-        .select("institutes.name AS institute_name, institutes.id AS institute_id")
-        .distinct("institute_id")
+    @institutes = InstituteDepartment.eligible_institutes(params)
     if @institutes.empty?
       render json: { message: "No institutes found" }, status: :not_found
     else
+      @institutes = @institutes.joins(:institute)
+      .select("institutes.name AS institute_name, institutes.id AS institute_id")
+      .distinct("institute_id")
       render json: { institutes: @institutes.as_json }, status: :ok
     end
   end
@@ -20,13 +19,13 @@ class Api::V1::InstitutesController < ApplicationController
   def primary_result
     matrix_data = AhpMatrixBuilder.build_ahp_matrix(params, true)
     result = AhpCalculator.new(matrix_data[:criteria], matrix_data[:matrix]).result
-    @institutes = Institute.includes(:departments).limit(5)
+    @institute_departments  = InstituteDepartment.fetch_institutes(result, params, true)
   end
 
   def enhanced_result
     matrix_data = AhpMatrixBuilder.build_ahp_matrix(params)
     result = AhpCalculator.new(matrix_data[:criteria], matrix_data[:matrix]).result
-    @institutes = Institute.includes(:departments)
+    @institute_departments  = InstituteDepartment.fetch_institutes(result, params)
   end
 
   def import_institutes
