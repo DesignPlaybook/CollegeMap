@@ -28,4 +28,11 @@
     sudo -i -u postgres psql
     ALTER USER WITH PASSWORD 'your_secure_password';
     \q
+
+### setup cron
+    touch log/cron_error.log
+    touch log/cron.log
+    chmod 664 log/cron.log
+    chmod 664 log/cron_error.log
+    bundle exec whenever --update-crontab
     
