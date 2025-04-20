@@ -17,7 +17,7 @@ class AhpMatrixBuilder
     #     based on the input comparisons.
     def self.build_ahp_matrix(input_json= {}, primary=false)
     
-        comparisons = input_json["_json"] || input_json["preferences"].select { |key, value| value == true }.keys
+        comparisons = input_json["comparisons"] || input_json["preferences"].select { |key, value| value == true }.keys
 
         # Step 1: Extract unique criteria and map them to indices
         criteria = comparisons.flat_map { |entry| (entry["comparisonKey"] || entry).split("_") }.uniq

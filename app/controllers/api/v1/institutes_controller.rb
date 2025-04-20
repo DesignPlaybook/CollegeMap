@@ -25,7 +25,8 @@ class Api::V1::InstitutesController < ApplicationController
   def enhanced_result
     matrix_data = AhpMatrixBuilder.build_ahp_matrix(params)
     result = AhpCalculator.new(matrix_data[:criteria], matrix_data[:matrix]).result
-    @institute_departments  = InstituteDepartment.fetch_institutes(result, params)
+    @institute_departments = InstituteDepartment.fetch_institutes(result, params)
+    @csv = InstituteDepartment.create_csv(@institute_departments)
   end
 
   def import_institutes

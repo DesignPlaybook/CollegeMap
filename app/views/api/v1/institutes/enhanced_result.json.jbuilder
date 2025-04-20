@@ -3,4 +3,6 @@ json.institutes do
     json.name institute_department.institute_name
     json.department_name institute_department.department_name
   end
+
+  json.report @csv
 end

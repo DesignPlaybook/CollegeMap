@@ -80,4 +80,36 @@ class InstituteDepartment < ApplicationRecord
       .where(institute_id: params[:preffered_institute_ids])
       .ids
   end
+
+  def self.generate_csv(institute_departments)
+    CSV.generate(headers: true) do |csv|
+      csv << ["Institute Name", "Department Name"]
+      institute_departments.each do |institute_department|
+        csv << [institute_department.institute_name, institute_department.department_name]
+      end
+    end
+  end
+
+  def self.create_csv(institute_departments)
+    return unless institute_departments.present?
+
+    # Generate CSV content
+    csv_content = generate_csv(institute_departments)
+
+    # Save the CSV to a file
+    save_csv_to_file(csv_content)
+  end
+
+  def self.save_csv_to_file(csv_content)
+    # Create a unique filename with timestamp and UUID
+    filename = "institute_departments_#{Time.now.strftime('%Y%m%d%H%M%S')}_#{SecureRandom.uuid}.csv"
+    dir_path = Rails.root.join("public", "csvs")
+    FileUtils.mkdir_p(dir_path) unless File.directory?(dir_path)
+  
+    file_path = dir_path.join(filename)
+    
+    File.write(file_path, csv_content)
+  
+    file_url = "#{ENV['BASE_URL']}/csvs/#{filename}"
+  end
 end
