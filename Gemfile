@@ -41,6 +41,8 @@ gem 'jbuilder', '~> 2.7'
 
 gem 'csv'
 
+gem 'razorpay'
+
 gem 'whenever', require: false
 
 group :development, :test do
