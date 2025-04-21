@@ -9,7 +9,7 @@ class OtpService
   # Send OTP via SMS (Replace with actual SMS provider API)
   def self.send_otp(mobile_number, otp)
     # Example: Integrate with Fast2SMS, Textlocal, Twilio, etc.
-    SmsService.send_message(mobile_number, "Your #{ENV["SITE_TITLE"]} OTP is: #{otp}")
+    SmsService.send_message(mobile_number, otp)
   end
 
   # Validate OTP expiration (e.g., 5 min validity)

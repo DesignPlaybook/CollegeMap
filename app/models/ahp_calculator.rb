@@ -47,8 +47,9 @@ class AhpCalculator
       ci = (lambda_max - @criteria.length) / (@criteria.length - 1)
       ri = RI_VALUES[@criteria.length] || 1.24 # Default RI if not found
       cr = ci / ri
+      consistency_score = 100/(2.718 ** (cr *2)) 
   
-      { lambda_max: lambda_max.round(4), ci: ci.round(4), cr: cr.round(4) }
+      { lambda_max: lambda_max.round(4), ci: ci.round(4), cr: cr.round(4), consistency_score: consistency_score.round(2) }
     end
   
     # Final Result (Weights + Consistency Check)

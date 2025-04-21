@@ -5,8 +5,8 @@ require 'json'
 class SmsService
   SMS_API_URL = "https://www.fast2sms.com/dev/custom".freeze
   SMS_ROUTE = "dlt".freeze
-  SENDER_ID = "DLT_SENDER_ID".freeze
-  MESSAGE_ID = "YOUR_MESSAGE_ID".freeze
+  SENDER_ID = ENV["SMS_SENDER_ID"].freeze
+  MESSAGE_ID = ENV["MESSAGE_ID"].freeze
 
   def self.send_message(mobile_number, message)
     begin
