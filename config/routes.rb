@@ -18,6 +18,7 @@ Rails.application.routes.draw do
           post :download_result
           post :check_eligibility
           post :import_institutes
+          post :check_consistancy
         end
       end
     end

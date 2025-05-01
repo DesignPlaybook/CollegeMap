@@ -7,8 +7,11 @@ class InstituteDepartment < ApplicationRecord
 
   # Fetch eligible institutes based on gender, category, and rank
   def self.eligible_institutes(params)
-    where(gender: params[:gender], category_slug: params[:category])
-      .where("closing_rank >= ?", params[:rank])
+    query = where(gender: params[:gender], category_slug: params[:category])
+            .where("closing_rank >= ?", params[:rank])
+
+    query = query.where(course_length: params[:course_duration]) if params[:course_duration].present?
+    query
   end
 
   # Fetches and ranks institutes based on the given parameters and weights

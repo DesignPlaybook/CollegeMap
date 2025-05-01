@@ -38,6 +38,12 @@ class Api::V1::InstitutesController < ApplicationController
     end
   end
 
+  def check_consistancy
+    matrix_data = AhpMatrixBuilder.build_ahp_matrix(params)
+    result = AhpCalculator.new(matrix_data[:criteria], matrix_data[:matrix]).result
+    render json: { consistency_score: result.dig(:consistency, :consistency_score) }
+  end
+
   private
 
   def institute_params
