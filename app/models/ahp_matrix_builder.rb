@@ -20,7 +20,7 @@ class AhpMatrixBuilder
         comparisons = input_json["comparisons"] || input_json["preferences"].select { |key, value| value == true }.keys
 
         # Step 1: Extract unique criteria and map them to indices
-        criteria = comparisons.flat_map { |entry| (entry["comparisonKey"] || entry).split("_") }.uniq
+        criteria = comparisons.flat_map { |entry| (entry["comparisonKey"] || entry).split("-") }.uniq
         criteria_index = criteria.each_with_index.to_h
 
         # Step 2: Initialize an NxN matrix with diagonal elements set to 1.0
