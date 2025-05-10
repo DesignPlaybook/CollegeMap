@@ -32,7 +32,7 @@ class AhpMatrixBuilder
 
         # Step 3: Populate the matrix with comparison values
         comparisons.each do |entry|
-            crit1, crit2 = entry["comparisonKey"].split("_")
+            crit1, crit2 = entry["comparisonKey"].split("-")
             value = entry["comparisonValue"]
 
             i, j = criteria_index[crit1], criteria_index[crit2]
