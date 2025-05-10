@@ -1,6 +1,6 @@
 class AhpCalculator
     attr_reader :criteria, :comparisons, :normalized_matrix, :priority_vector, :consistency_matrix, :weighted_sum_vector
-    RI_VALUES = { 1 => 0, 2 => 0, 3 => 0.58, 4 => 0.90, 5 => 1.12, 6 => 1.24 } # RI values for up to 6 criteria
+    RI_VALUES = { 1 => 1, 2 => 1, 3 => 0.58, 4 => 0.90, 5 => 1.12, 6 => 1.24 } # RI values for up to 6 criteria
   
     def initialize(criteria, comparisons)
       @criteria = criteria
@@ -47,7 +47,7 @@ class AhpCalculator
       ci = (lambda_max - @criteria.length) / (@criteria.length - 1)
       ri = RI_VALUES[@criteria.length] || 1.24 # Default RI if not found
       cr = ci / ri
-      consistency_score = 100/(2.718 ** (cr *2)) 
+      consistency_score = 100/(2.718 ** (cr *2))
   
       { lambda_max: lambda_max.round(4), ci: ci.round(4), cr: cr.round(4), consistency_score: consistency_score.round(2) }
     end
