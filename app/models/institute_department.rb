@@ -4,6 +4,9 @@ class InstituteDepartment < ApplicationRecord
 
   validates :institute_id, presence: true
   validates :department_id, presence: true
+  SCORE_KEYS = %w(placement_score higher_studies_score
+                  academics_experience_score campus_score
+                  entrepreneurship_score).freeze
 
   # Fetch eligible institutes based on gender, category, and rank
   def self.eligible_institutes(params)
@@ -21,7 +24,8 @@ class InstituteDepartment < ApplicationRecord
 
     scored_departments = calculate_scores(eligible_departments, result[:weights])
 
-    primary_result ? fetch_primary_results(scored_departments) : fetch_secondary_results(scored_departments, eligible_departments, params)
+    institute_departments = primary_result ? fetch_primary_results(scored_departments, result[:weights]) : fetch_secondary_results(scored_departments, eligible_departments, params)
+    ordered_result = order_by_weight(institute_departments, result[:weights])
   end
 
   private
@@ -34,10 +38,11 @@ class InstituteDepartment < ApplicationRecord
       .as_json
       .each do |department|
         department.each do |key, value|
+          next if key == "id" || key == "institute_id"
           weight = weights[key.to_sym]
           department[key] = value * weight unless weight.nil?
         end
-        department[:total_score] = department.except("id").values.sum
+        department[:total_score] = department.except("id, institute_id").values.sum
       end
   end
 
@@ -48,6 +53,8 @@ class InstituteDepartment < ApplicationRecord
       .where(id: top_departments.map { |dept| dept["id"] })
       .joins(:institute, :department)
       .select("institutes.name AS institute_name, departments.name AS department_name")
+      .select(:id, :institute_id, :placement_score, :higher_studies_score,
+              :academics_experience_score, :campus_score, :entrepreneurship_score)
       .limit(5)
   end
 
@@ -72,7 +79,10 @@ class InstituteDepartment < ApplicationRecord
       .where(id: top_department_ids)
       .joins(:institute, :department)
       .select("institutes.name AS institute_name, departments.name AS department_name")
+      .select(:id, :institute_id, :placement_score, :higher_studies_score,
+              :academics_experience_score, :campus_score, :entrepreneurship_score)
       .limit(25)
+
   end
 
   # Fetch preferred institute department IDs
@@ -88,7 +98,7 @@ class InstituteDepartment < ApplicationRecord
     CSV.generate(headers: true) do |csv|
       csv << ["Institute Name", "Department Name"]
       institute_departments.each do |institute_department|
-        csv << [institute_department.institute_name, institute_department.department_name]
+        csv << [institute_department['institute_name'], institute_department['department_name']]
       end
     end
   end
@@ -114,5 +124,22 @@ class InstituteDepartment < ApplicationRecord
     File.write(file_path, csv_content)
   
     file_url = "#{ENV['BASE_URL']}/csvs/#{filename}"
+  end
+
+  def self.order_by_weight(institute_departments, weights)
+    institute_departments = institute_departments.as_json
+    institute_departments.each do |department|
+      total_score = 0
+      department.each do |key, value|
+        next unless SCORE_KEYS.include?(key)
+        weight = weights[key.to_sym]
+        v = value
+        v =  value * weight unless weight.nil?
+        total_score += v
+      end
+      department[:total_score] = total_score
+    end
+
+    institute_departments.sort_by { |dept| -dept[:total_score] }
   end
 end
