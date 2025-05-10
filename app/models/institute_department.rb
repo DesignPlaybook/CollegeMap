@@ -24,7 +24,7 @@ class InstituteDepartment < ApplicationRecord
 
     scored_departments = calculate_scores(eligible_departments, result[:weights])
 
-    institute_departments = primary_result ? fetch_primary_results(scored_departments, result[:weights]) : fetch_secondary_results(scored_departments, eligible_departments, params)
+    institute_departments = primary_result ? fetch_primary_results(scored_departments) : fetch_secondary_results(scored_departments, eligible_departments, params)
     ordered_result = order_by_weight(institute_departments, result[:weights])
   end
 
