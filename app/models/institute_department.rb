@@ -87,10 +87,10 @@ class InstituteDepartment < ApplicationRecord
 
   # Fetch preferred institute department IDs
   def self.fetch_preferred_ids(eligible_departments, params)
-    return [] unless params[:preffered_institute_ids].present?
+    return [] unless params[:preferred_institute_ids].present?
 
     eligible_departments
-      .where(institute_id: params[:preffered_institute_ids])
+      .where(institute_id: params[:preferred_institute_ids])
       .ids
   end
 
