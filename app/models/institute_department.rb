@@ -21,7 +21,7 @@ class InstituteDepartment < ApplicationRecord
   def self.fetch_institutes(result = {}, params = {}, primary_result = false)
     eligible_departments = eligible_institutes(params)
     return [] if eligible_departments.empty?
-
+debugger
     scored_departments = calculate_scores(eligible_departments, result[:weights])
     institute_departments = primary_result ? fetch_primary_results(scored_departments) : fetch_secondary_results(scored_departments, eligible_departments, params)
     ordered_result = order_by_weight(institute_departments, result[:weights])
@@ -56,7 +56,7 @@ class InstituteDepartment < ApplicationRecord
       .select("institutes.name AS institute_name, departments.name AS department_name")
       .select(:id, :institute_id, :placement_score, :higher_studies_score,
               :academics_experience_score, :campus_score, :entrepreneurship_score)
-      .limit(5)
+      .limit(10)
   end
 
   # Fetch secondary results (top 25 departments with preferences)
@@ -72,7 +72,6 @@ class InstituteDepartment < ApplicationRecord
       .select(:id, :institute_id, :placement_score, :higher_studies_score,
               :academics_experience_score, :campus_score, :entrepreneurship_score)
       .limit(25)
-
   end
 
   # Fetch preferred institute department IDs
