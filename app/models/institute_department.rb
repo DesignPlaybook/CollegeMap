@@ -49,7 +49,7 @@ class InstituteDepartment < ApplicationRecord
 
   # Fetch primary results (top 5 departments)
   def self.fetch_primary_results(scored_departments)
-    top_departments = scored_departments.sort_by { |dept| -dept[:total_score] }.first(5)
+    top_departments = scored_departments.sort_by { |dept| -dept[:total_score] }.first(10)
     InstituteDepartment
       .where(id: top_departments.map { |dept| dept["id"] })
       .joins(:institute, :department)
