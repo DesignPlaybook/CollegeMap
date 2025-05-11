@@ -27,7 +27,7 @@ class SessionsController < ApplicationController
 
     if user&.otp == params[:otp].to_s && user.otp_sent_at.present? && user.otp_sent_at > 5.minutes.ago
       token = generate_jwt(user)
-      user.update(otp: nil) # Clear OTP after successful login
+      user.update(otp: nil, otp_attempts: 0) # Clear OTP after successful login
 
       # Return JWT in JSON response
       render json: { message: "Login successful", token: token }
