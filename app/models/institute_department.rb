@@ -23,7 +23,6 @@ class InstituteDepartment < ApplicationRecord
     return [] if eligible_departments.empty?
 
     scored_departments = calculate_scores(eligible_departments, result[:weights])
-
     institute_departments = primary_result ? fetch_primary_results(scored_departments) : fetch_secondary_results(scored_departments, eligible_departments, params)
     ordered_result = order_by_weight(institute_departments, result[:weights])
   end
@@ -32,17 +31,19 @@ class InstituteDepartment < ApplicationRecord
 
   # Calculate weighted scores for each department
   def self.calculate_scores(eligible_departments, weights)
-    eligible_departments
+    eligible_departments = eligible_departments
       .select(:id, :institute_id, :placement_score, :higher_studies_score,
               :academics_experience_score, :campus_score, :entrepreneurship_score)
       .as_json
+      
+      eligible_departments
       .each do |department|
         department.each do |key, value|
-          next if key == "id" || key == "institute_id"
-          weight = weights[key.to_sym]
+          next unless weights.keys.include?(key)
+          weight = weights[key]
           department[key] = value * weight unless weight.nil?
         end
-        department[:total_score] = department.except("id, institute_id").values.sum
+        department[:total_score] = department.values_at(*weights.keys).sum
       end
   end
 
@@ -131,8 +132,8 @@ class InstituteDepartment < ApplicationRecord
     institute_departments.each do |department|
       total_score = 0
       department.each do |key, value|
-        next unless SCORE_KEYS.include?(key)
-        weight = weights[key.to_sym]
+        next unless weights.keys.include?(key)
+        weight = weights[key]
         v = value
         v =  value * weight unless weight.nil?
         total_score += v
