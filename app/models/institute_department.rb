@@ -62,19 +62,8 @@ class InstituteDepartment < ApplicationRecord
   # Fetch secondary results (top 25 departments with preferences)
   def self.fetch_secondary_results(scored_departments, eligible_departments, params)
     preferred_ids = fetch_preferred_ids(eligible_departments, params)
-    remaining_count = 25 - preferred_ids.size
 
-    unless preferred_ids.empty?
-      scored_departments.reject! { |dept| preferred_ids.include?(dept["id"]) }
-    end
-
-    top_department_ids = if remaining_count > 0
-                           scored_departments.sort_by { |dept| -dept[:total_score] }
-                                             .first(remaining_count)
-                                             .map { |dept| dept["id"] } + preferred_ids
-                         else
-                           preferred_ids
-                         end
+    top_department_ids = preferred_ids
 
     InstituteDepartment
       .where(id: top_department_ids)
