@@ -1,5 +1,5 @@
 class Api::V1::InstitutesController < ApplicationController
-  before_action :authenticate_user, only: [:enhanced_result]
+  before_action :authenticate_user, only: [:enhanced_result, :check_consistancy]
   def index
     @institutes = Institute.includes(:departments).limit(5)
   end
