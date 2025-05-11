@@ -21,7 +21,7 @@ class InstituteDepartment < ApplicationRecord
   def self.fetch_institutes(result = {}, params = {}, primary_result = false)
     eligible_departments = eligible_institutes(params)
     return [] if eligible_departments.empty?
-debugger
+
     scored_departments = calculate_scores(eligible_departments, result[:weights])
     institute_departments = primary_result ? fetch_primary_results(scored_departments) : fetch_secondary_results(scored_departments, eligible_departments, params)
     ordered_result = order_by_weight(institute_departments, result[:weights])
