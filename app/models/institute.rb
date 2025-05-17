@@ -1,6 +1,6 @@
 class Institute < ApplicationRecord
-  has_many :institute_departments
-  has_many :departments, through: :institute_departments
+  has_many :institute_departments, dependent: :destroy
+  has_many :departments, through: :institute_departments, dependent: :destroy
   validates :name, presence: true
   # validates :address, presence: true
 
