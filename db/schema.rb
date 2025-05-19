@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
+ActiveRecord::Schema[7.2].define(version: 2025_05_19_200331) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
     t.index ["slug"], name: "index_institutes_on_slug", unique: true
   end
 
+  create_table "payment_orders", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "razorpay_order_id", null: false
+    t.integer "amount"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["razorpay_order_id"], name: "index_payment_orders_on_razorpay_order_id"
+    t.index ["user_id"], name: "index_payment_orders_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "mobile_number", null: false
     t.string "otp"
@@ -59,6 +70,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_15_074007) do
     t.datetime "otp_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "balance", default: 0
     t.index ["mobile_number"], name: "index_users_on_mobile_number"
   end
 end
