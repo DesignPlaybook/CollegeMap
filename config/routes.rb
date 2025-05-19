@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  post "payments/create_order"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -19,10 +20,20 @@ Rails.application.routes.draw do
           post :check_eligibility
           post :import_institutes
           post :check_consistancy
+          post :check_balance
+        end
+      end
+
+      resources :payments, only: [] do
+        collection do
+          post :create_order
+          post :verify
         end
       end
     end
   end
+  
+  
   # Defines the root path route ("/")
   # root "posts#index"
 end
