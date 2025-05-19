@@ -1,5 +1,5 @@
 class Api::V1::InstitutesController < ApplicationController
-  before_action :authenticate_user, only: [:enhanced_result, :check_consistancy]
+  before_action :authenticate_user, only: [:enhanced_result, :check_consistancy, :check_balance]
   def index
     @institutes = Institute.includes(:departments).limit(5)
   end
@@ -23,10 +23,20 @@ class Api::V1::InstitutesController < ApplicationController
   end
 
   def enhanced_result
-    matrix_data = AhpMatrixBuilder.build_ahp_matrix(params)
-    result = AhpCalculator.new(matrix_data[:criteria], matrix_data[:matrix]).result
-    @institute_departments = InstituteDepartment.fetch_institutes(result, params)
-    @csv = InstituteDepartment.create_csv(@institute_departments)
+    if current_user.balance < ENV["AMOUNT"].to_i
+      render json: { message: "Insufficient balance" }, status: :forbidden
+      return
+    else 
+      matrix_data = AhpMatrixBuilder.build_ahp_matrix(params)
+      result = AhpCalculator.new(matrix_data[:criteria], matrix_data[:matrix]).result
+      @institute_departments = InstituteDepartment.fetch_institutes(result, params)
+      @csv = InstituteDepartment.create_csv(@institute_departments)
+      current_user.update(balance: current_user.balance - ENV["AMOUNT"].to_i)
+    end
+  end
+
+  def check_balance
+    render json: { balance: current_user.balance_in_inr }
   end
 
   def import_institutes
