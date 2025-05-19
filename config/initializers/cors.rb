@@ -1,6 +1,6 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'https://www.collegemap.in'  # Allow only your frontend domain
+    origins 'https://www.collegemap.in', 'https://collegemap.in'  # Allow only your frontend domain
 
     resource '*',
       headers: :any,
