@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   SECRET_KEY = Rails.application.secret_key_base
+  attr_reader :current_user
 
   def authenticate_user
     token = extract_token_from_header
