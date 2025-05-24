@@ -32,6 +32,7 @@ class Api::V1::InstitutesController < ApplicationController
       @institute_departments = InstituteDepartment.fetch_institutes(result, params)
       @csv = InstituteDepartment.create_csv(@institute_departments)
       current_user.update(balance: current_user.balance - ENV["AMOUNT"].to_i)
+      @user = current_user
     end
   end
 
