@@ -5,6 +5,6 @@ json.institutes do
   end
 end
 
-json.balance current_user.balance_in_inr
+json.balance @user.balance_in_inr
 
 json.report @csv
